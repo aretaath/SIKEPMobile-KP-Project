@@ -4,6 +4,12 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>App membutuhkan akses lokasi untuk menampilkan alamat Anda.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>App membutuhkan akses lokasi untuk menampilkan alamat Anda.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>App membutuhkan akses lokasi untuk menampilkan alamat Anda.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Sikep</string>
 	<key>CFBundleExecutable</key>

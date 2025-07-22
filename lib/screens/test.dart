@@ -244,14 +244,13 @@ class _HomePageState extends State<HomePage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: SliderConfirm(
-        width: contextWidth * 0.9,
-        height: 60,
+        width: 300,
+        height: 50,
         onConfirm: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Kehadiran berhasil dicatat')),
-          );
+          // aksi ketika button ditekan
         },
-      ),
+        tujuan: ['Kantor Cabang', 'Lokasi Proyek'], // contoh tujuan
+      )
     );
   }
 

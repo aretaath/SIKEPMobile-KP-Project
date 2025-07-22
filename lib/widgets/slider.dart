@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class SliderConfirm extends StatefulWidget {
   final double width;
   final double height;
   final VoidCallback onConfirm;
+  final List<String> tujuan; // daftar tujuan
 
   const SliderConfirm({
     Key? key,
     required this.width,
     required this.height,
     required this.onConfirm,
+    required this.tujuan,
   }) : super(key: key);
 
   @override
@@ -17,95 +20,107 @@ class SliderConfirm extends StatefulWidget {
 }
 
 class _SliderConfirmState extends State<SliderConfirm> {
-  double _dragPosition = 0.0;
-  bool _confirmed = false;
+  int _step = 0;
+  bool _isWaiting = false;
+  Timer? _timer;
+  DateTime? _waktuBerangkat;
+
+  String get _buttonText {
+    if (_step == 0) {
+      return 'Catat Keberangkatan';
+    } else if (_step > 0 && _step <= widget.tujuan.length) {
+      return 'Ditempat (${widget.tujuan[_step - 1]})';
+    } else {
+      return 'Pulang';
+    }
+  }
+
+  String get _successText {
+    if (_step == 0) {
+      return 'Keberangkatan Tercatat';
+    } else if (_step > 0 && _step <= widget.tujuan.length) {
+      return 'Tiba di ${widget.tujuan[_step - 1]}';
+    } else {
+      return 'Kepulangan Tercatat';
+    }
+  }
+
+  bool get _isLastStep => _step > widget.tujuan.length;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _handlePressed() {
+    setState(() {
+      _isWaiting = true;
+    });
+    widget.onConfirm();
+
+    if (!_isLastStep) {
+      _timer = Timer(const Duration(minutes: 10), () {
+        setState(() {
+          _step++;
+          _isWaiting = false;
+        });
+      });
+    } else {
+      setState(() {
+        _step++;
+        _isWaiting = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final double circleSize = widget.height - 8;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double buttonWidth = widget.width > screenWidth
+        ? screenWidth * 0.9
+        : widget.width;
 
-    // ...existing code...
-return LayoutBuilder(
-  builder: (context, constraints) {
-    final double screenWidth = constraints.maxWidth;
-    final double trackPadding = screenWidth * 0.05; // Responsive padding
-    final double circleSize = widget.height - 8;
-
-    // Jalur slider: dari trackPadding hingga screenWidth - trackPadding - circleSize
-    final double minDrag = 0.0;
-    final double maxDrag = screenWidth - circleSize - (trackPadding * 2);
-
-    return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        if (_confirmed) return;
-
-        setState(() {
-          _dragPosition += details.primaryDelta!;
-          _dragPosition = _dragPosition.clamp(minDrag, maxDrag);
-
-          if (_dragPosition >= maxDrag - 2) {
-            _confirmed = true;
-            widget.onConfirm();
-          }
-        });
-      },
-      onHorizontalDragEnd: (_) {
-        if (!_confirmed) {
-          setState(() {
-            _dragPosition = minDrag;
-          });
-        }
-      },
-      child: Container(
-        width: widget.width,
-        height: widget.height,
-        decoration: BoxDecoration(
-          color: _confirmed ? Colors.teal[400] : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(widget.height / 2),
-        ),
-        child: Stack(
-          children: [
-            Center(
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_waktuBerangkat != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
               child: Text(
-                _confirmed ? 'Sukses Tercatat' : 'Geser untuk catat kehadiran',
-                style: TextStyle(
-                  color: _confirmed ? Colors.white : Colors.black87,
+                'Berangkat: ${_waktuBerangkat != null ? TimeOfDay.fromDateTime(_waktuBerangkat!).format(context) : ''}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          SizedBox(
+            width: buttonWidth,
+            height: widget.height,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _isWaiting ? Colors.teal[400] : Colors.teal,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(widget.height / 2),
+                ),
+              ),
+          onPressed: _isWaiting || _isLastStep ? null : _handlePressed,
+              child: Text(
+                _isWaiting ? _successText : _buttonText,
+                style: const TextStyle(
+                  color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Poppins',
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
-            AnimatedPositioned(
-              duration: Duration(milliseconds: 200),
-              left: trackPadding + _dragPosition,
-              top: (widget.height - circleSize) / 2, // agar circle selalu di tengah vertikal
-              child: Container(
-                width: circleSize,
-                height: circleSize,
-                decoration: BoxDecoration(
-                  color: _confirmed ? Colors.white : Colors.teal[400],
-                  shape: BoxShape.circle,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 5,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  _confirmed ? Icons.check : Icons.arrow_forward,
-                  color: _confirmed ? Colors.teal[400] : Colors.white,
-                  size: 28,
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
-  },
-); }
+  }
 }
