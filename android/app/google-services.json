@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1056411112452",
+    "project_id": "sikep-temporary-db",
+    "storage_bucket": "sikep-temporary-db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056411112452:android:ba969850fdd0783d20d151",
+        "android_client_info": {
+          "package_name": "com.example.flutter_sikep"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-sy4tMgBLSz8xzNTg-YxSR341uUgu1V4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056411112452:android:583370ef2c3587f920d151",
+        "android_client_info": {
+          "package_name": "com.example.sikep"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-sy4tMgBLSz8xzNTg-YxSR341uUgu1V4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
