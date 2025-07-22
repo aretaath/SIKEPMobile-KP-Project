@@ -7,8 +7,8 @@ class SliderConfirm extends StatefulWidget {
 
   const SliderConfirm({
     Key? key,
-    this.width = 357,
-    this.height = 60,
+    required this.width,
+    required this.height,
     required this.onConfirm,
   }) : super(key: key);
 
@@ -22,11 +22,18 @@ class _SliderConfirmState extends State<SliderConfirm> {
 
   @override
   Widget build(BuildContext context) {
+    final double circleSize = widget.height - 8;
 
-    final double circleSize = widget.height - 8; 
-    final double trackPadding = 4.0; 
+    // ...existing code...
+return LayoutBuilder(
+  builder: (context, constraints) {
+    final double screenWidth = constraints.maxWidth;
+    final double trackPadding = screenWidth * 0.05; // Responsive padding
+    final double circleSize = widget.height - 8;
 
-    final double maxDrag = widget.width - circleSize - (trackPadding * 7);
+    // Jalur slider: dari trackPadding hingga screenWidth - trackPadding - circleSize
+    final double minDrag = 0.0;
+    final double maxDrag = screenWidth - circleSize - (trackPadding * 2);
 
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
@@ -34,7 +41,7 @@ class _SliderConfirmState extends State<SliderConfirm> {
 
         setState(() {
           _dragPosition += details.primaryDelta!;
-          _dragPosition = _dragPosition.clamp(0.0, maxDrag);
+          _dragPosition = _dragPosition.clamp(minDrag, maxDrag);
 
           if (_dragPosition >= maxDrag - 2) {
             _confirmed = true;
@@ -45,7 +52,7 @@ class _SliderConfirmState extends State<SliderConfirm> {
       onHorizontalDragEnd: (_) {
         if (!_confirmed) {
           setState(() {
-            _dragPosition = 0; 
+            _dragPosition = minDrag;
           });
         }
       },
@@ -70,9 +77,10 @@ class _SliderConfirmState extends State<SliderConfirm> {
                 textAlign: TextAlign.center,
               ),
             ),
-            Positioned(
-              left: trackPadding + _dragPosition, 
-              top: trackPadding, 
+            AnimatedPositioned(
+              duration: Duration(milliseconds: 200),
+              left: trackPadding + _dragPosition,
+              top: (widget.height - circleSize) / 2, // agar circle selalu di tengah vertikal
               child: Container(
                 width: circleSize,
                 height: circleSize,
@@ -98,5 +106,6 @@ class _SliderConfirmState extends State<SliderConfirm> {
         ),
       ),
     );
-  }
+  },
+); }
 }
