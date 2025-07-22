@@ -22,16 +22,21 @@ class _SliderConfirmState extends State<SliderConfirm> {
 
   @override
   Widget build(BuildContext context) {
-    final double maxDrag = widget.width - widget.height;
+
+    final double circleSize = widget.height - 8; 
+    final double trackPadding = 4.0; 
+
+    final double maxDrag = widget.width - circleSize - (trackPadding * 7);
 
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
         if (_confirmed) return;
+
         setState(() {
-          _dragPosition += details.delta.dx;
-          if (_dragPosition < 0) _dragPosition = 0;
-          if (_dragPosition > maxDrag) _dragPosition = maxDrag;
-          if (_dragPosition == maxDrag) {
+          _dragPosition += details.primaryDelta!;
+          _dragPosition = _dragPosition.clamp(0.0, maxDrag);
+
+          if (_dragPosition >= maxDrag - 2) {
             _confirmed = true;
             widget.onConfirm();
           }
@@ -40,7 +45,7 @@ class _SliderConfirmState extends State<SliderConfirm> {
       onHorizontalDragEnd: (_) {
         if (!_confirmed) {
           setState(() {
-            _dragPosition = 0;
+            _dragPosition = 0; 
           });
         }
       },
@@ -65,14 +70,12 @@ class _SliderConfirmState extends State<SliderConfirm> {
                 textAlign: TextAlign.center,
               ),
             ),
-
             Positioned(
-              left: _dragPosition,
-              top: 0,
-              bottom: 0,
+              left: trackPadding + _dragPosition, 
+              top: trackPadding, 
               child: Container(
-                width: widget.height,
-                height: widget.height,
+                width: circleSize,
+                height: circleSize,
                 decoration: BoxDecoration(
                   color: _confirmed ? Colors.white : Colors.teal[400],
                   shape: BoxShape.circle,
