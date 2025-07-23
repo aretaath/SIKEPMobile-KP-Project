@@ -39,6 +39,9 @@ class _HomePageState extends State<HomePage> {
   List<String?> _waktuTujuan = [null, null];
   String? _waktuPulang;
   List<String> _tujuan = ['Kantor Cabang', 'Lokasi Proyek'];
+  String? _lokasiBerangkat;
+  String? _lokasiPulang;
+
   int _step = 0;
 
   bool _showOfficialTripDetail = true;
@@ -53,6 +56,9 @@ class _HomePageState extends State<HomePage> {
   String _currentAddress = 'Memuat lokasi...';
 
   Timer? _timer;
+  int? _selectedTujuanIndex;
+
+  List<String?> _lokasiTujuan = [null, null];
 
   @override
   void initState() {
@@ -74,7 +80,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _currentTime = DateFormat('HH:mm', locale).format(now);
-      _currentDay = DateFormat('EEEE', locale).format(now); // Hari nama
+      _currentDay = DateFormat('EEEE', locale).format(now);
       _currentDate = DateFormat('d MMMM yyyy', locale).format(now);
     });
   }
@@ -136,6 +142,158 @@ class _HomePageState extends State<HomePage> {
         _currentAddress = 'Gagal mendapatkan lokasi: $e';
       });
     }
+  }
+
+  void _showBerangkatInfo() {
+    if (_waktuBerangkat == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Detail Keberangkatan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Waktu: $_waktuBerangkat',
+              style: const TextStyle(color: Colors.teal, fontSize: 14),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Lokasi: ${_lokasiBerangkat ?? 'Tidak tersedia'}',
+              style: const TextStyle(color: Colors.black54, fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tutup'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTujuanDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Pilih Tujuan'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(_tujuan.length, (i) {
+              final sudahDicatat = _waktuTujuan[i] != null;
+              return Column(
+                children: [
+                  ListTile(
+                    title: Text(
+                      _tujuan[i],
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          sudahDicatat
+                              ? 'Tiba: ${_waktuTujuan[i]}'
+                              : 'Belum dicatat',
+                          style: TextStyle(
+                            color: sudahDicatat ? Colors.teal : Colors.red,
+                            fontSize: 13,
+                          ),
+                        ),
+                        if (_lokasiTujuan[i] != null)
+                          Text(
+                            'Lokasi: ${_lokasiTujuan[i]}',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.black54,
+                            ),
+                          ),
+                      ],
+                    ),
+                    trailing: sudahDicatat
+                        ? const Icon(Icons.check_circle, color: Colors.teal)
+                        : ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedTujuanIndex = i;
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Pilih'),
+                          ),
+                  ),
+                  if (i != _tujuan.length - 1)
+                    const Divider(height: 0, thickness: 0.5),
+                ],
+              );
+            }),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Tutup'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showPulangInfo() {
+    if (_waktuPulang == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Detail Kepulangan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Waktu: $_waktuPulang',
+              style: const TextStyle(color: Colors.teal, fontSize: 14),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Lokasi: ${_lokasiPulang ?? 'Tidak tersedia'}',
+              style: const TextStyle(color: Colors.black54, fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tutup'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _catatWaktu() {
+    final now = TimeOfDay.now().format(context);
+    setState(() {
+      if (_step == 0) {
+        _waktuBerangkat = now;
+        _lokasiBerangkat = _currentAddress;
+      } else if (_step > 0 && _step <= _tujuan.length) {
+        if (_selectedTujuanIndex != null) {
+          _waktuTujuan[_selectedTujuanIndex!] = now;
+          _lokasiTujuan[_selectedTujuanIndex!] = _currentAddress;
+          _selectedTujuanIndex = null;
+        }
+      } else if (_step > _tujuan.length) {
+        _waktuPulang = now;
+        _lokasiPulang = _currentAddress;
+      }
+      _step++;
+    });
   }
 
   @override
@@ -230,32 +388,27 @@ class _HomePageState extends State<HomePage> {
   Widget _timeline() {
     return TimelineWidget(
       data: TimelineData(
-        tujuan: ['Kantor Cabang', 'Lokasi Proyek'],
+        tujuan: _tujuan,
         waktuBerangkat: _waktuBerangkat,
         waktuTujuan: _waktuTujuan,
         waktuPulang: _waktuPulang,
+        lokasiBerangkat: _lokasiBerangkat,
+        lokasiPulang: _lokasiPulang,
       ),
+      onDitempatTap: _showTujuanDialog,
+      onBerangkatTap: _showBerangkatInfo,
+      onPulangTap: _showPulangInfo,
     );
   }
 
   Widget _attendanceButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: SliderConfirm(
+      child: AttendanceButton(
         width: 300,
         height: 50,
-        onConfirm: () {
-          final now = TimeOfDay.now().format(context);
-          setState(() {
-            if (_step == 0) {
-              _waktuBerangkat = now;
-            } else if (_step > 0 && _step <= _tujuan.length) {
-              _waktuTujuan[_step - 1] = now;
-            } else if (_step > _tujuan.length) {
-              _waktuPulang = now;
-            }
-            _step++;
-          });
+        onConfirm: (selectedTujuan) {
+          _catatWaktu();
         },
         tujuan: _tujuan,
       ),

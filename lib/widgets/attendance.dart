@@ -1,39 +1,42 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-class SliderConfirm extends StatefulWidget {
+class AttendanceButton extends StatefulWidget {
   final double width;
   final double height;
-  final VoidCallback onConfirm;
+  final void Function(String? selectedTujuan) onConfirm;
   final List<String> tujuan;
+  final String? selectedTujuan;
 
-  const SliderConfirm({
+  const AttendanceButton({
     Key? key,
     required this.width,
     required this.height,
     required this.onConfirm,
     required this.tujuan,
+    this.selectedTujuan,
   }) : super(key: key);
 
   @override
-  _SliderConfirmState createState() => _SliderConfirmState();
+  _attendanceButtonState createState() => _attendanceButtonState();
 }
 
-class _SliderConfirmState extends State<SliderConfirm> {
+class _attendanceButtonState extends State<AttendanceButton> {
   int _step = 0;
   bool _isWaiting = false;
   Timer? _timer;
   DateTime? _waktuBerangkat;
+  String? _lastSelectedTujuan;
 
   String get _buttonText {
     if (_step == 0) {
       return 'Catat Keberangkatan';
     } else if (_step > 0 && _step <= widget.tujuan.length) {
-      return 'Ditempat';
+      return 'Catat Kehadiran di Lokasi';
     } else if (_step == widget.tujuan.length + 1) {
       return 'Catat Pulang';
     } else {
-      return 'Catat Pulang';
+      return 'Kepulangan Tercatat';
     }
   }
 
@@ -41,11 +44,21 @@ class _SliderConfirmState extends State<SliderConfirm> {
     if (_step == 0) {
       return 'Keberangkatan Tercatat';
     } else if (_step > 0 && _step <= widget.tujuan.length) {
-      return 'Tiba di ${widget.tujuan[_step - 1]}';
+      return _lastSelectedTujuan != null
+          ? 'Tiba di $_lastSelectedTujuan'
+          : 'Tiba di lokasi';
     } else if (_step == widget.tujuan.length + 1) {
       return 'Kepulangan Tercatat';
     } else {
       return 'Kepulangan Tercatat';
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant AttendanceButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedTujuan != null) {
+      _lastSelectedTujuan = widget.selectedTujuan;
     }
   }
 
@@ -61,7 +74,7 @@ class _SliderConfirmState extends State<SliderConfirm> {
     setState(() {
       _isWaiting = true;
     });
-    widget.onConfirm();
+    widget.onConfirm(_lastSelectedTujuan);
 
     if (_step < widget.tujuan.length) {
       _timer = Timer(const Duration(seconds: 30), () {

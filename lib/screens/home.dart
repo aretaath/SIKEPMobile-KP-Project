@@ -404,13 +404,16 @@ class _HomePageState extends State<HomePage> {
   Widget _attendanceButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: SliderConfirm(
+      child: AttendanceButton(
         width: 300,
         height: 50,
-        onConfirm: () {
+        onConfirm: (selectedTujuan) {
           _catatWaktu();
         },
         tujuan: _tujuan,
+        selectedTujuan: _selectedTujuanIndex != null
+            ? _tujuan[_selectedTujuanIndex!]
+            : null,
       ),
     );
   }
