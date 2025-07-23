@@ -29,9 +29,9 @@ class _SliderConfirmState extends State<SliderConfirm> {
     if (_step == 0) {
       return 'Catat Keberangkatan';
     } else if (_step > 0 && _step <= widget.tujuan.length) {
-      return 'Ditempat (${widget.tujuan[_step - 1]})';
+      return 'Ditempat';
     } else {
-      return 'Pulang';
+      return 'Catat Pulang';
     }
   }
 
@@ -60,7 +60,7 @@ class _SliderConfirmState extends State<SliderConfirm> {
     widget.onConfirm();
 
     if (!_isLastStep) {
-      _timer = Timer(const Duration(minutes: 10), () {
+      _timer = Timer(const Duration(minutes: 1), () {
         setState(() {
           _step++;
           _isWaiting = false;

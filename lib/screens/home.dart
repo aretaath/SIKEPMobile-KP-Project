@@ -55,6 +55,8 @@ class _HomePageState extends State<HomePage> {
   Timer? _timer;
   int? _selectedTujuanIndex;
 
+  List<String?> _lokasiTujuan = [null, null]; // lokasi user saat klik ditempat
+
   @override
   void initState() {
     super.initState();
@@ -151,19 +153,30 @@ class _HomePageState extends State<HomePage> {
               final sudahDicatat = _waktuTujuan[i] != null;
               return ListTile(
                 title: Text(_tujuan[i]),
-                subtitle: Text(
-                  sudahDicatat ? 'Tiba: ${_waktuTujuan[i]}' : 'Belum dicatat',
-                  style: TextStyle(
-                    color: sudahDicatat ? Colors.teal : Colors.red,
-                  ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      sudahDicatat
+                          ? 'Tiba: ${_waktuTujuan[i]}'
+                          : 'Belum dicatat',
+                      style: TextStyle(
+                        color: sudahDicatat ? Colors.teal : Colors.red,
+                      ),
+                    ),
+                    if (_lokasiTujuan[i] != null)
+                      Text(
+                        'Lokasi: ${_lokasiTujuan[i]}',
+                        style: const TextStyle(fontSize: 13, color: Colors.black54),
+                      ),
+                  ],
                 ),
                 trailing: sudahDicatat
                     ? const Icon(Icons.check, color: Colors.teal)
                     : ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _selectedTujuanIndex =
-                                i; // simpan index tujuan yang dipilih
+                            _selectedTujuanIndex = i;
                           });
                           Navigator.pop(context);
                         },
@@ -185,7 +198,8 @@ class _HomePageState extends State<HomePage> {
       } else if (_step > 0 && _step <= _tujuan.length) {
         if (_selectedTujuanIndex != null) {
           _waktuTujuan[_selectedTujuanIndex!] = now;
-          _selectedTujuanIndex = null; // reset setelah pencatatan
+          _lokasiTujuan[_selectedTujuanIndex!] = _currentAddress; // simpan lokasi user
+          _selectedTujuanIndex = null;
         }
       } else if (_step > _tujuan.length) {
         _waktuPulang = now;

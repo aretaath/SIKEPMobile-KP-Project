@@ -49,10 +49,9 @@ class TimelineWidget extends StatelessWidget {
             onTap: onDitempatTap,
             child: _TimelineItem(
               icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
-              time: waktuDitempat ?? '--:--',
-              label: tujuanTerakhir != null
-                  ? 'Ditempat ($tujuanTerakhir)'
-                  : 'Ditempat',
+              time:
+                  '${data.waktuTujuan.where((w) => w != null).length}/${data.tujuan.length}',
+              label: 'Ditempat', // hanya tampil "Ditempat"
             ),
           ),
         ),
