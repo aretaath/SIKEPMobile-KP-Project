@@ -39,6 +39,9 @@ class _HomePageState extends State<HomePage> {
   List<String?> _waktuTujuan = [null, null];
   String? _waktuPulang;
   List<String> _tujuan = ['Kantor Cabang', 'Lokasi Proyek'];
+  String? _lokasiBerangkat;
+  String? _lokasiPulang;
+
   int _step = 0;
 
   bool _showOfficialTripDetail = true;
@@ -141,6 +144,38 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _showBerangkatInfo() {
+    if (_waktuBerangkat == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Detail Keberangkatan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Waktu: $_waktuBerangkat',
+              style: const TextStyle(color: Colors.teal, fontSize: 14),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Lokasi: ${_lokasiBerangkat ?? 'Tidak tersedia'}',
+              style: const TextStyle(color: Colors.black54, fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tutup'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showTujuanDialog() {
     showDialog(
       context: context,
@@ -151,45 +186,93 @@ class _HomePageState extends State<HomePage> {
             mainAxisSize: MainAxisSize.min,
             children: List.generate(_tujuan.length, (i) {
               final sudahDicatat = _waktuTujuan[i] != null;
-              return ListTile(
-                title: Text(_tujuan[i]),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      sudahDicatat
-                          ? 'Tiba: ${_waktuTujuan[i]}'
-                          : 'Belum dicatat',
-                      style: TextStyle(
-                        color: sudahDicatat ? Colors.teal : Colors.red,
-                      ),
+              return Column(
+                children: [
+                  ListTile(
+                    title: Text(
+                      _tujuan[i],
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    if (_lokasiTujuan[i] != null)
-                      Text(
-                        'Lokasi: ${_lokasiTujuan[i]}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.black54,
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          sudahDicatat
+                              ? 'Tiba: ${_waktuTujuan[i]}'
+                              : 'Belum dicatat',
+                          style: TextStyle(
+                            color: sudahDicatat ? Colors.teal : Colors.red,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                  ],
-                ),
-                trailing: sudahDicatat
-                    ? const Icon(Icons.check, color: Colors.teal)
-                    : ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedTujuanIndex = i;
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Pilih'),
-                      ),
+                        if (_lokasiTujuan[i] != null)
+                          Text(
+                            'Lokasi: ${_lokasiTujuan[i]}',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.black54,
+                            ),
+                          ),
+                      ],
+                    ),
+                    trailing: sudahDicatat
+                        ? const Icon(Icons.check_circle, color: Colors.teal)
+                        : ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedTujuanIndex = i;
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Pilih'),
+                          ),
+                  ),
+                  if (i != _tujuan.length - 1)
+                    const Divider(height: 0, thickness: 0.5),
+                ],
               );
             }),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Tutup'),
+            ),
+          ],
         );
       },
+    );
+  }
+
+  void _showPulangInfo() {
+    if (_waktuPulang == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Detail Kepulangan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Waktu: $_waktuPulang',
+              style: const TextStyle(color: Colors.teal, fontSize: 14),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Lokasi: ${_lokasiPulang ?? 'Tidak tersedia'}',
+              style: const TextStyle(color: Colors.black54, fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tutup'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -198,6 +281,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       if (_step == 0) {
         _waktuBerangkat = now;
+        _lokasiBerangkat = _currentAddress;
       } else if (_step > 0 && _step <= _tujuan.length) {
         if (_selectedTujuanIndex != null) {
           _waktuTujuan[_selectedTujuanIndex!] = now;
@@ -206,6 +290,7 @@ class _HomePageState extends State<HomePage> {
         }
       } else if (_step > _tujuan.length) {
         _waktuPulang = now;
+        _lokasiPulang = _currentAddress;
       }
       _step++;
     });
@@ -307,8 +392,12 @@ class _HomePageState extends State<HomePage> {
         waktuBerangkat: _waktuBerangkat,
         waktuTujuan: _waktuTujuan,
         waktuPulang: _waktuPulang,
+        lokasiBerangkat: _lokasiBerangkat,
+        lokasiPulang: _lokasiPulang,
       ),
       onDitempatTap: _showTujuanDialog,
+      onBerangkatTap: _showBerangkatInfo,
+      onPulangTap: _showPulangInfo,
     );
   }
 

@@ -5,38 +5,46 @@ class TimelineData {
   final List<String?> waktuTujuan;
   final String? waktuPulang;
   final List<String> tujuan;
+  final String? lokasiBerangkat;
+  final String? lokasiPulang;
 
   TimelineData({
     required this.tujuan,
     this.waktuBerangkat,
     required this.waktuTujuan,
     this.waktuPulang,
+    this.lokasiBerangkat,
+    this.lokasiPulang,
   });
 }
 
 class TimelineWidget extends StatelessWidget {
   final TimelineData data;
   final VoidCallback? onDitempatTap;
+  final VoidCallback? onBerangkatTap;
+  final VoidCallback? onPulangTap;
 
-  const TimelineWidget({Key? key, required this.data, this.onDitempatTap})
-    : super(key: key);
+  const TimelineWidget({
+    Key? key,
+    required this.data,
+    this.onDitempatTap,
+    this.onBerangkatTap,
+    this.onPulangTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    for (int i = data.waktuTujuan.length - 1; i >= 0; i--) {
-      if (data.waktuTujuan[i] != null) {
-        break;
-      }
-    }
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
-          child: _TimelineItem(
-            icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
-            time: data.waktuBerangkat ?? '--:--',
-            label: 'Berangkat',
+          child: GestureDetector(
+            onTap: onBerangkatTap,
+            child: _TimelineItem(
+              icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
+              time: data.waktuBerangkat ?? '--:--',
+              label: 'Berangkat',
+            ),
           ),
         ),
         Expanded(
@@ -51,10 +59,13 @@ class TimelineWidget extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: _TimelineItem(
-            icon: Image.asset('doc/pulang.png', width: 32, height: 32),
-            time: data.waktuPulang ?? '--:--',
-            label: 'Pulang',
+          child: GestureDetector(
+            onTap: onPulangTap,
+            child: _TimelineItem(
+              icon: Image.asset('doc/pulang.png', width: 32, height: 32),
+              time: data.waktuPulang ?? '--:--',
+              label: 'Pulang',
+            ),
           ),
         ),
       ],
