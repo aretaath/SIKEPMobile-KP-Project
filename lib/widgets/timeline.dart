@@ -16,40 +16,55 @@ class TimelineData {
 
 class TimelineWidget extends StatelessWidget {
   final TimelineData data;
+  final VoidCallback? onDitempatTap;
 
-  const TimelineWidget({Key? key, required this.data}) : super(key: key);
+  const TimelineWidget({Key? key, required this.data, this.onDitempatTap})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> items = [
-      _TimelineItem(
-        icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
-        time: data.waktuBerangkat ?? '--:--',
-        label: 'Berangkat',
-      ),
-    ];
-
-    for (int i = 0; i < data.tujuan.length; i++) {
-      items.add(
-        _TimelineItem(
-          icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
-          time: data.waktuTujuan.length > i && data.waktuTujuan[i] != null
-              ? data.waktuTujuan[i]!
-              : '--:--',
-          label: 'Ditempat (${data.tujuan[i]})',
-        ),
-      );
+    // Ambil waktu tujuan terakhir yang dicatat
+    String? waktuDitempat;
+    String? tujuanTerakhir;
+    for (int i = data.waktuTujuan.length - 1; i >= 0; i--) {
+      if (data.waktuTujuan[i] != null) {
+        waktuDitempat = data.waktuTujuan[i];
+        tujuanTerakhir = data.tujuan[i];
+        break;
+      }
     }
 
-    items.add(
-      _TimelineItem(
-        icon: Image.asset('doc/pulang.png', width: 32, height: 32),
-        time: data.waktuPulang ?? '--:--',
-        label: 'Pulang',
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: _TimelineItem(
+            icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
+            time: data.waktuBerangkat ?? '--:--',
+            label: 'Berangkat',
+          ),
+        ),
+        Expanded(
+          child: GestureDetector(
+            onTap: onDitempatTap,
+            child: _TimelineItem(
+              icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
+              time: waktuDitempat ?? '--:--',
+              label: tujuanTerakhir != null
+                  ? 'Ditempat ($tujuanTerakhir)'
+                  : 'Ditempat',
+            ),
+          ),
+        ),
+        Expanded(
+          child: _TimelineItem(
+            icon: Image.asset('doc/pulang.png', width: 32, height: 32),
+            time: data.waktuPulang ?? '--:--',
+            label: 'Pulang',
+          ),
+        ),
+      ],
     );
-
-    return Wrap(spacing: 24, alignment: WrapAlignment.center, children: items);
   }
 }
 

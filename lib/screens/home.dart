@@ -53,6 +53,7 @@ class _HomePageState extends State<HomePage> {
   String _currentAddress = 'Memuat lokasi...';
 
   Timer? _timer;
+  int? _selectedTujuanIndex;
 
   @override
   void initState() {
@@ -136,6 +137,61 @@ class _HomePageState extends State<HomePage> {
         _currentAddress = 'Gagal mendapatkan lokasi: $e';
       });
     }
+  }
+
+  void _showTujuanDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Pilih Tujuan'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(_tujuan.length, (i) {
+              final sudahDicatat = _waktuTujuan[i] != null;
+              return ListTile(
+                title: Text(_tujuan[i]),
+                subtitle: Text(
+                  sudahDicatat ? 'Tiba: ${_waktuTujuan[i]}' : 'Belum dicatat',
+                  style: TextStyle(
+                    color: sudahDicatat ? Colors.teal : Colors.red,
+                  ),
+                ),
+                trailing: sudahDicatat
+                    ? const Icon(Icons.check, color: Colors.teal)
+                    : ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedTujuanIndex =
+                                i; // simpan index tujuan yang dipilih
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Pilih'),
+                      ),
+              );
+            }),
+          ),
+        );
+      },
+    );
+  }
+
+  void _catatWaktu() {
+    final now = TimeOfDay.now().format(context);
+    setState(() {
+      if (_step == 0) {
+        _waktuBerangkat = now;
+      } else if (_step > 0 && _step <= _tujuan.length) {
+        if (_selectedTujuanIndex != null) {
+          _waktuTujuan[_selectedTujuanIndex!] = now;
+          _selectedTujuanIndex = null; // reset setelah pencatatan
+        }
+      } else if (_step > _tujuan.length) {
+        _waktuPulang = now;
+      }
+      _step++;
+    });
   }
 
   @override
@@ -230,11 +286,12 @@ class _HomePageState extends State<HomePage> {
   Widget _timeline() {
     return TimelineWidget(
       data: TimelineData(
-        tujuan: ['Kantor Cabang', 'Lokasi Proyek'],
+        tujuan: _tujuan,
         waktuBerangkat: _waktuBerangkat,
         waktuTujuan: _waktuTujuan,
         waktuPulang: _waktuPulang,
       ),
+      onDitempatTap: _showTujuanDialog,
     );
   }
 
@@ -245,17 +302,7 @@ class _HomePageState extends State<HomePage> {
         width: 300,
         height: 50,
         onConfirm: () {
-          final now = TimeOfDay.now().format(context);
-          setState(() {
-            if (_step == 0) {
-              _waktuBerangkat = now;
-            } else if (_step > 0 && _step <= _tujuan.length) {
-              _waktuTujuan[_step - 1] = now;
-            } else if (_step > _tujuan.length) {
-              _waktuPulang = now;
-            }
-            _step++;
-          });
+          _catatWaktu();
         },
         tujuan: _tujuan,
       ),
