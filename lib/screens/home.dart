@@ -218,13 +218,26 @@ class _HomePageState extends State<HomePage> {
                     trailing: sudahDicatat
                         ? const Icon(Icons.check_circle, color: Colors.teal)
                         : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _selectedTujuanIndex == i
+                                  ? Colors.teal
+                                  : Colors.grey.shade300,
+                            ),
                             onPressed: () {
                               setState(() {
                                 _selectedTujuanIndex = i;
                               });
                               Navigator.pop(context);
                             },
-                            child: const Text('Pilih'),
+                            child: Text(
+                              _selectedTujuanIndex == i ? 'Dipilih' : 'Pilih',
+                              style: TextStyle(
+                                color: _selectedTujuanIndex == i
+                                    ? Colors.white
+                                    : Colors.black87,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                   ),
                   if (i != _tujuan.length - 1)
