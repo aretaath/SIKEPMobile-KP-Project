@@ -23,12 +23,8 @@ class TimelineWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? waktuDitempat;
-    String? tujuanTerakhir;
     for (int i = data.waktuTujuan.length - 1; i >= 0; i--) {
       if (data.waktuTujuan[i] != null) {
-        waktuDitempat = data.waktuTujuan[i];
-        tujuanTerakhir = data.tujuan[i];
         break;
       }
     }

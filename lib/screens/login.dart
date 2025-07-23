@@ -16,6 +16,12 @@ class _LoginState extends State<Login> {
   int _num1 = 10;
   int _num2 = 6;
 
+  @override
+  void initState() {
+    super.initState();
+    _generateCaptcha();
+  }
+
   void _generateCaptcha() {
     setState(() {
       var rand = Random();
