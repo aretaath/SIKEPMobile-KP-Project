@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:sikep/widgets/slider.dart';
+import 'package:sikep/widgets/timeline.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +17,7 @@ class HomePage extends StatefulWidget {
     fontSize: 18,
     color: Colors.black,
   );
+
   static const TextStyle _userNipStyle = TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 14,
@@ -30,19 +32,15 @@ class HomePage extends StatefulWidget {
     fontSize: 14,
     color: Colors.black54,
   );
-  static const TextStyle _timelineTimeStyle = TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 16,
-    color: Colors.black87,
-  );
-  static const TextStyle _timelineLabelStyle = TextStyle(
-    fontWeight: FontWeight.normal,
-    fontSize: 14,
-    color: Colors.black54,
-  );
 }
 
 class _HomePageState extends State<HomePage> {
+  String? _waktuBerangkat;
+  List<String?> _waktuTujuan = [null, null]; // jumlah sesuai tujuan
+  String? _waktuPulang;
+  List<String> _tujuan = ['Kantor Cabang', 'Lokasi Proyek'];
+  int _step = 0; // 0: berangkat, 1..n: tujuan, n+1: pulang
+
   bool _showOfficialTripDetail = true;
   bool _showNotesForm = false;
 
@@ -103,13 +101,15 @@ class _HomePageState extends State<HomePage> {
       }
       if (permission == LocationPermission.deniedForever) {
         setState(() {
-          _currentAddress = 'Izin lokasi ditolak permanen';
+          _currentAddress =
+              'Izin lokasi ditolak permanen. Silakan aktifkan di pengaturan.';
         });
         return;
       }
 
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        desiredAccuracy: LocationAccuracy.best, // gunakan akurasi terbaik
+        timeLimit: Duration(seconds: 10), // batasi waktu pencarian
       );
 
       List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -120,16 +120,20 @@ class _HomePageState extends State<HomePage> {
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
         setState(() {
-          _currentAddress = '${place.street ?? ''} ${place.locality ?? ''}'
-              .trim();
-          if (_currentAddress.isEmpty) {
+          _currentAddress =
+              '${place.street ?? ''}, ${place.locality ?? ''}, ${place.subAdministrativeArea ?? ''}, ${place.administrativeArea ?? ''}';
+          if (_currentAddress.trim().isEmpty) {
             _currentAddress = 'Alamat tidak ditemukan';
           }
+        });
+      } else {
+        setState(() {
+          _currentAddress = 'Alamat tidak ditemukan';
         });
       }
     } catch (e) {
       setState(() {
-        _currentAddress = 'Gagal mendapatkan lokasi';
+        _currentAddress = 'Gagal mendapatkan lokasi: $e';
       });
     }
   }
@@ -163,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 30),
                   _timeline(),
                   const SizedBox(height: 25),
-                  _attendanceSlider(),
+                  _attendanceButton(),
                   const SizedBox(height: 30),
                   _perdinDetail(),
                   const SizedBox(height: 25),
@@ -224,33 +228,37 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _timeline() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: const [
-        _TimelineItem(icon: Icons.login, time: '09:20', label: 'Berangkat'),
-        _TimelineItem(
-          icon: Icons.radio_button_unchecked,
-          time: '--:--',
-          label: 'Ditempat',
-        ),
-        _TimelineItem(icon: Icons.logout, time: '--:--', label: 'Pulang'),
-      ],
+    return TimelineWidget(
+      data: TimelineData(
+        tujuan: ['Kantor Cabang', 'Lokasi Proyek'],
+        waktuBerangkat: _waktuBerangkat,
+        waktuTujuan: _waktuTujuan,
+        waktuPulang: _waktuPulang,
+      ),
     );
   }
 
-  Widget _attendanceSlider() {
-    final contextWidth = MediaQuery.of(context).size.width;
-
+  Widget _attendanceButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: SliderConfirm(
         width: 300,
         height: 50,
         onConfirm: () {
-          // aksi ketika button ditekan
+          final now = TimeOfDay.now().format(context);
+          setState(() {
+            if (_step == 0) {
+              _waktuBerangkat = now;
+            } else if (_step > 0 && _step <= _tujuan.length) {
+              _waktuTujuan[_step - 1] = now;
+            } else if (_step > _tujuan.length) {
+              _waktuPulang = now;
+            }
+            _step++;
+          });
         },
-        tujuan: ['Kantor Cabang', 'Lokasi Proyek'], // contoh tujuan
-      )
+        tujuan: _tujuan,
+      ),
     );
   }
 
@@ -259,7 +267,7 @@ class _HomePageState extends State<HomePage> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: const Color(0xFF38C7A8),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -292,14 +300,14 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           if (_showOfficialTripDetail)
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -323,7 +331,7 @@ class _HomePageState extends State<HomePage> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: const Color(0xFF38C7A8),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Column(
@@ -361,7 +369,7 @@ class _HomePageState extends State<HomePage> {
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(15),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x3f000000),
@@ -453,7 +461,7 @@ class _HomePageState extends State<HomePage> {
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.grey.shade300),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
@@ -461,30 +469,6 @@ class _HomePageState extends State<HomePage> {
         note,
         style: const TextStyle(fontSize: 16, color: Colors.black),
       ),
-    );
-  }
-}
-
-class _TimelineItem extends StatelessWidget {
-  final IconData icon;
-  final String time;
-  final String label;
-
-  const _TimelineItem({
-    required this.icon,
-    required this.time,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, size: 32, color: Colors.black87),
-        const SizedBox(height: 4),
-        Text(time, style: HomePage._timelineTimeStyle),
-        Text(label, style: HomePage._timelineLabelStyle),
-      ],
     );
   }
 }

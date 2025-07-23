@@ -101,7 +101,8 @@ class _HomePageState extends State<HomePage> {
       }
       if (permission == LocationPermission.deniedForever) {
         setState(() {
-          _currentAddress = 'Izin lokasi ditolak permanen. Silakan aktifkan di pengaturan.';
+          _currentAddress =
+              'Izin lokasi ditolak permanen. Silakan aktifkan di pengaturan.';
         });
         return;
       }
@@ -119,7 +120,8 @@ class _HomePageState extends State<HomePage> {
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
         setState(() {
-          _currentAddress = '${place.street ?? ''}, ${place.locality ?? ''}, ${place.subAdministrativeArea ?? ''}, ${place.administrativeArea ?? ''}';
+          _currentAddress =
+              '${place.street ?? ''}, ${place.locality ?? ''}, ${place.subAdministrativeArea ?? ''}, ${place.administrativeArea ?? ''}';
           if (_currentAddress.trim().isEmpty) {
             _currentAddress = 'Alamat tidak ditemukan';
           }
@@ -165,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 30),
                   _timeline(),
                   const SizedBox(height: 25),
-                  _attendanceSlider(),
+                  _attendanceButton(),
                   const SizedBox(height: 30),
                   _perdinDetail(),
                   const SizedBox(height: 25),
@@ -236,7 +238,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _attendanceSlider() {
+  Widget _attendanceButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: SliderConfirm(

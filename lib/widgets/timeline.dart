@@ -23,38 +23,38 @@ class TimelineWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> items = [
       _TimelineItem(
-        icon: Icons.login,
+        icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
         time: data.waktuBerangkat ?? '--:--',
         label: 'Berangkat',
       ),
     ];
 
     for (int i = 0; i < data.tujuan.length; i++) {
-      items.add(_TimelineItem(
-        icon: Icons.radio_button_unchecked,
-        time: data.waktuTujuan.length > i && data.waktuTujuan[i] != null
-            ? data.waktuTujuan[i]!
-            : '--:--',
-        label: 'Ditempat (${data.tujuan[i]})',
-      ));
+      items.add(
+        _TimelineItem(
+          icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
+          time: data.waktuTujuan.length > i && data.waktuTujuan[i] != null
+              ? data.waktuTujuan[i]!
+              : '--:--',
+          label: 'Ditempat (${data.tujuan[i]})',
+        ),
+      );
     }
 
-    items.add(_TimelineItem(
-      icon: Icons.logout,
-      time: data.waktuPulang ?? '--:--',
-      label: 'Pulang',
-    ));
-
-    return Wrap(
-      spacing: 24,
-      alignment: WrapAlignment.center,
-      children: items,
+    items.add(
+      _TimelineItem(
+        icon: Image.asset('doc/pulang.png', width: 32, height: 32),
+        time: data.waktuPulang ?? '--:--',
+        label: 'Pulang',
+      ),
     );
+
+    return Wrap(spacing: 24, alignment: WrapAlignment.center, children: items);
   }
 }
 
 class _TimelineItem extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String time;
   final String label;
 
@@ -68,7 +68,7 @@ class _TimelineItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, size: 32, color: Colors.teal),
+        icon,
         const SizedBox(height: 4),
         Text(
           time,
