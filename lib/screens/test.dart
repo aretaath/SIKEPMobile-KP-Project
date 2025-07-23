@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-import 'package:sikep/widgets/slider.dart';
+import 'package:sikep/widgets/attendance.dart';
 import 'package:sikep/widgets/timeline.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,10 +36,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? _waktuBerangkat;
-  List<String?> _waktuTujuan = [null, null]; // jumlah sesuai tujuan
+  List<String?> _waktuTujuan = [null, null];
   String? _waktuPulang;
   List<String> _tujuan = ['Kantor Cabang', 'Lokasi Proyek'];
-  int _step = 0; // 0: berangkat, 1..n: tujuan, n+1: pulang
+  int _step = 0;
 
   bool _showOfficialTripDetail = true;
   bool _showNotesForm = false;
@@ -108,8 +108,8 @@ class _HomePageState extends State<HomePage> {
       }
 
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best, // gunakan akurasi terbaik
-        timeLimit: Duration(seconds: 10), // batasi waktu pencarian
+        desiredAccuracy: LocationAccuracy.best,
+        timeLimit: Duration(seconds: 10),
       );
 
       List<Placemark> placemarks = await placemarkFromCoordinates(

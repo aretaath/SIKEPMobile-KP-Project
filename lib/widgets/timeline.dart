@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TimelineData {
   final String? waktuBerangkat;
-  final List<String?> waktuTujuan; // waktu tiba di setiap tujuan
+  final List<String?> waktuTujuan;
   final String? waktuPulang;
   final List<String> tujuan;
 
@@ -23,7 +23,6 @@ class TimelineWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ambil waktu tujuan terakhir yang dicatat
     String? waktuDitempat;
     String? tujuanTerakhir;
     for (int i = data.waktuTujuan.length - 1; i >= 0; i--) {
@@ -51,7 +50,7 @@ class TimelineWidget extends StatelessWidget {
               icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
               time:
                   '${data.waktuTujuan.where((w) => w != null).length}/${data.tujuan.length}',
-              label: 'Ditempat', // hanya tampil "Ditempat"
+              label: 'Ditempat',
             ),
           ),
         ),

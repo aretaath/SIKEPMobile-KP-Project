@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-import 'package:sikep/widgets/slider.dart';
+import 'package:sikep/widgets/attendance.dart';
 import 'package:sikep/widgets/timeline.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,10 +36,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? _waktuBerangkat;
-  List<String?> _waktuTujuan = [null, null]; // jumlah sesuai tujuan
+  List<String?> _waktuTujuan = [null, null];
   String? _waktuPulang;
   List<String> _tujuan = ['Kantor Cabang', 'Lokasi Proyek'];
-  int _step = 0; // 0: berangkat, 1..n: tujuan, n+1: pulang
+  int _step = 0;
 
   bool _showOfficialTripDetail = true;
   bool _showNotesForm = false;
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
   Timer? _timer;
   int? _selectedTujuanIndex;
 
-  List<String?> _lokasiTujuan = [null, null]; // lokasi user saat klik ditempat
+  List<String?> _lokasiTujuan = [null, null];
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _currentTime = DateFormat('HH:mm', locale).format(now);
-      _currentDay = DateFormat('EEEE', locale).format(now); // Hari nama
+      _currentDay = DateFormat('EEEE', locale).format(now);
       _currentDate = DateFormat('d MMMM yyyy', locale).format(now);
     });
   }
@@ -111,8 +111,8 @@ class _HomePageState extends State<HomePage> {
       }
 
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best, // gunakan akurasi terbaik
-        timeLimit: Duration(seconds: 10), // batasi waktu pencarian
+        desiredAccuracy: LocationAccuracy.best,
+        timeLimit: Duration(seconds: 10),
       );
 
       List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -167,7 +167,10 @@ class _HomePageState extends State<HomePage> {
                     if (_lokasiTujuan[i] != null)
                       Text(
                         'Lokasi: ${_lokasiTujuan[i]}',
-                        style: const TextStyle(fontSize: 13, color: Colors.black54),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.black54,
+                        ),
                       ),
                   ],
                 ),
@@ -198,7 +201,7 @@ class _HomePageState extends State<HomePage> {
       } else if (_step > 0 && _step <= _tujuan.length) {
         if (_selectedTujuanIndex != null) {
           _waktuTujuan[_selectedTujuanIndex!] = now;
-          _lokasiTujuan[_selectedTujuanIndex!] = _currentAddress; // simpan lokasi user
+          _lokasiTujuan[_selectedTujuanIndex!] = _currentAddress;
           _selectedTujuanIndex = null;
         }
       } else if (_step > _tujuan.length) {
