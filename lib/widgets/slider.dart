@@ -26,26 +26,30 @@ class _SliderConfirmState extends State<SliderConfirm> {
   DateTime? _waktuBerangkat;
 
   String get _buttonText {
-    if (_step == 0) {
-      return 'Catat Keberangkatan';
-    } else if (_step > 0 && _step <= widget.tujuan.length) {
-      return 'Ditempat';
-    } else {
-      return 'Catat Pulang';
-    }
+  if (_step == 0) {
+    return 'Catat Keberangkatan';
+  } else if (_step > 0 && _step <= widget.tujuan.length) {
+    return 'Ditempat';
+  } else if (_step == widget.tujuan.length + 1) {
+    return 'Catat Pulang'; // Tombol untuk mencatat kepulangan
+  } else {
+    return 'Catat Pulang'; // Setelah kepulangan tercatat, anggap sudah selesai
   }
+}
 
   String get _successText {
-    if (_step == 0) {
-      return 'Keberangkatan Tercatat';
-    } else if (_step > 0 && _step <= widget.tujuan.length) {
-      return 'Tiba di ${widget.tujuan[_step - 1]}';
-    } else {
-      return 'Kepulangan Tercatat';
-    }
+  if (_step == 0) {
+    return 'Keberangkatan Tercatat';
+  } else if (_step > 0 && _step <= widget.tujuan.length) {
+    return 'Tiba di ${widget.tujuan[_step - 1]}';
+  } else if (_step == widget.tujuan.length + 1) {
+    return 'Kepulangan Tercatat'; // Menampilkan keberhasilan setelah kepulangan tercatat
+  } else {
+    return 'Kepulangan Tercatat'; // Setelah proses selesai, tampilkan ini
   }
+}
 
-  bool get _isLastStep => _step > widget.tujuan.length;
+  bool get _isLastStep => _step > widget.tujuan.length + 1;
 
   @override
   void dispose() {
@@ -54,25 +58,33 @@ class _SliderConfirmState extends State<SliderConfirm> {
   }
 
   void _handlePressed() {
-    setState(() {
-      _isWaiting = true;
-    });
-    widget.onConfirm();
+  setState(() {
+    _isWaiting = true;
+  });
+  widget.onConfirm();
 
-    if (!_isLastStep) {
-      _timer = Timer(const Duration(minutes: 1), () {
-        setState(() {
-          _step++;
-          _isWaiting = false;
-        });
-      });
-    } else {
+  if (_step < widget.tujuan.length) {
+    // Jika belum sampai tujuan terakhir, lanjutkan ke tujuan berikutnya.
+    _timer = Timer(const Duration(minutes: 1), () {
       setState(() {
         _step++;
-        _isWaiting = true;
+        _isWaiting = false;
       });
-    }
+    });
+  } else if (_step == widget.tujuan.length) {
+    // Jika sudah di tujuan terakhir, ubah tombol ke "Catat Pulang"
+    setState(() {
+      _step++;
+      _isWaiting = true;
+    });
+  } else {
+    // Setelah "Catat Pulang", pencatatan kepulangan selesai
+    setState(() {
+      _step++;
+      _isWaiting = false;
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
