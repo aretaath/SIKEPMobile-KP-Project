@@ -414,6 +414,7 @@ class _HomePageState extends State<HomePage> {
         selectedTujuan: _selectedTujuanIndex != null
             ? _tujuan[_selectedTujuanIndex!]
             : null,
+        onRequestSelectTujuan: _showTujuanDialog,
       ),
     );
   }

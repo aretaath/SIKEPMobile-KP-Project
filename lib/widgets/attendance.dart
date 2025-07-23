@@ -7,6 +7,7 @@ class AttendanceButton extends StatefulWidget {
   final void Function(String? selectedTujuan) onConfirm;
   final List<String> tujuan;
   final String? selectedTujuan;
+  final VoidCallback? onRequestSelectTujuan;
 
   const AttendanceButton({
     Key? key,
@@ -15,6 +16,7 @@ class AttendanceButton extends StatefulWidget {
     required this.onConfirm,
     required this.tujuan,
     this.selectedTujuan,
+    required this.onRequestSelectTujuan,
   }) : super(key: key);
 
   @override
@@ -71,6 +73,15 @@ class _attendanceButtonState extends State<AttendanceButton> {
   }
 
   void _handlePressed() {
+    if (_step > 0 &&
+        _step <= widget.tujuan.length &&
+        _lastSelectedTujuan == null) {
+      if (widget.onRequestSelectTujuan != null) {
+        widget.onRequestSelectTujuan!();
+      }
+      return;
+    }
+
     setState(() {
       _isWaiting = true;
     });
