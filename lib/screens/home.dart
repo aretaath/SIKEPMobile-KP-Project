@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   int _step = 0;
 
+  bool _lokasiSiap = false;
   bool _showOfficialTripDetail = true;
   bool _showNotesForm = false;
 
@@ -86,6 +87,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchCurrentLocation() async {
+    setState(() {
+      _lokasiSiap = false;
+    });
+
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
@@ -125,12 +130,13 @@ class _HomePageState extends State<HomePage> {
 
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
+        final formatted =
+            '${place.street ?? ''}, ${place.locality ?? ''}, ${place.subAdministrativeArea ?? ''}, ${place.administrativeArea ?? ''}';
         setState(() {
-          _currentAddress =
-              '${place.street ?? ''}, ${place.locality ?? ''}, ${place.subAdministrativeArea ?? ''}, ${place.administrativeArea ?? ''}';
-          if (_currentAddress.trim().isEmpty) {
-            _currentAddress = 'Alamat tidak ditemukan';
-          }
+          _currentAddress = formatted.trim().isEmpty
+              ? 'Alamat tidak ditemukan'
+              : formatted;
+          _lokasiSiap = true;
         });
       } else {
         setState(() {
@@ -443,6 +449,7 @@ class _HomePageState extends State<HomePage> {
             ? _tujuan[_selectedTujuanIndex!]
             : null,
         onRequestSelectTujuan: _showTujuanDialog,
+        lokasiSiap: _lokasiSiap,
       ),
     );
   }

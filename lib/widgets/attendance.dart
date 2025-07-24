@@ -8,6 +8,7 @@ class AttendanceButton extends StatefulWidget {
   final List<String> tujuan;
   final String? selectedTujuan;
   final VoidCallback? onRequestSelectTujuan;
+  final bool lokasiSiap;
 
   const AttendanceButton({
     Key? key,
@@ -17,6 +18,7 @@ class AttendanceButton extends StatefulWidget {
     required this.tujuan,
     this.selectedTujuan,
     required this.onRequestSelectTujuan,
+    required this.lokasiSiap,
   }) : super(key: key);
 
   @override
@@ -143,16 +145,27 @@ class _attendanceButtonState extends State<AttendanceButton> {
                   borderRadius: BorderRadius.circular(widget.height / 2),
                 ),
               ),
-              onPressed: _isWaiting || _isLastStep ? null : _handlePressed,
-              child: Text(
-                _isWaiting ? _successText : _buttonText,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Poppins',
-                ),
-              ),
+              onPressed: (_isWaiting || _isLastStep || !widget.lokasiSiap)
+                  ? null
+                  : _handlePressed,
+              child: widget.lokasiSiap
+                  ? Text(
+                      _isWaiting ? _successText : _buttonText,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                      ),
+                    )
+                  : const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 2,
+                      ),
+                    ),
             ),
           ),
         ],
