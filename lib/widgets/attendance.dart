@@ -75,7 +75,7 @@ class _attendanceButtonState extends State<AttendanceButton> {
   void _handlePressed() {
     if (_step > 0 &&
         _step <= widget.tujuan.length &&
-        _lastSelectedTujuan == null) {
+        (widget.selectedTujuan == null || _lastSelectedTujuan == null)) {
       if (widget.onRequestSelectTujuan != null) {
         widget.onRequestSelectTujuan!();
       }
@@ -88,17 +88,18 @@ class _attendanceButtonState extends State<AttendanceButton> {
     widget.onConfirm(_lastSelectedTujuan);
 
     if (_step < widget.tujuan.length) {
-      _timer = Timer(const Duration(seconds: 30), () {
+      _timer = Timer(const Duration(seconds: 10), () {
         setState(() {
           _step++;
           _isWaiting = false;
         });
       });
     } else if (_step == widget.tujuan.length) {
-      _timer = Timer(const Duration(seconds: 30), () {
+      _timer = Timer(const Duration(seconds: 10), () {
         setState(() {
           _step++;
           _isWaiting = false;
+          //_lastSelectedTujuan = null;
         });
       });
     } else {

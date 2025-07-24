@@ -295,17 +295,20 @@ class _HomePageState extends State<HomePage> {
       if (_step == 0) {
         _waktuBerangkat = now;
         _lokasiBerangkat = _currentAddress;
+        _step++;
       } else if (_step > 0 && _step <= _tujuan.length) {
-        if (_selectedTujuanIndex != null) {
+        if (_selectedTujuanIndex != null &&
+            _waktuTujuan[_selectedTujuanIndex!] == null) {
           _waktuTujuan[_selectedTujuanIndex!] = now;
           _lokasiTujuan[_selectedTujuanIndex!] = _currentAddress;
           _selectedTujuanIndex = null;
+          _step++;
         }
       } else if (_step > _tujuan.length) {
         _waktuPulang = now;
         _lokasiPulang = _currentAddress;
+        _step++;
       }
-      _step++;
     });
   }
 
@@ -421,7 +424,19 @@ class _HomePageState extends State<HomePage> {
         width: 300,
         height: 50,
         onConfirm: (selectedTujuan) {
-          _catatWaktu();
+          if (_step > 0 && _step <= _tujuan.length) {
+            if (_selectedTujuanIndex == null) {
+              _showTujuanDialog();
+            } else if (_waktuTujuan[_selectedTujuanIndex!] != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Tujuan ini sudah dicatat')),
+              );
+            } else {
+              _catatWaktu();
+            }
+          } else {
+            _catatWaktu();
+          }
         },
         tujuan: _tujuan,
         selectedTujuan: _selectedTujuanIndex != null
