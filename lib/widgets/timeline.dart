@@ -18,95 +18,126 @@ class TimelineData {
   });
 }
 
-class TimelineWidget extends StatelessWidget {
+class TimelineWidget extends StatefulWidget {
   final TimelineData data;
-  final VoidCallback? onDitempatTap;
-  final VoidCallback? onBerangkatTap;
-  final VoidCallback? onPulangTap;
 
-  const TimelineWidget({
-    Key? key,
-    required this.data,
-    this.onDitempatTap,
-    this.onBerangkatTap,
-    this.onPulangTap,
-  }) : super(key: key);
+  const TimelineWidget({Key? key, required this.data}) : super(key: key);
 
   @override
+  _TimelineWidgetState createState() => _TimelineWidgetState();
+}
+
+class _TimelineWidgetState extends State<TimelineWidget> {
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: onBerangkatTap,
-            child: _TimelineItem(
-              icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
-              time: data.waktuBerangkat ?? '--:--',
-              label: 'Berangkat',
-            ),
-          ),
+    final List<_TimelineItem> items = [];
+
+    // Timeline hanya tampil berangkat terlebih dahulu
+    if (widget.data.waktuBerangkat != null &&
+        widget.data.waktuBerangkat != '') {
+      items.add(
+        _TimelineItem(
+          icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
+          time: widget.data.waktuBerangkat ?? '--:--',
+          label: 'Berangkat',
         ),
-        Expanded(
-          child: GestureDetector(
-            onTap: onDitempatTap,
-            child: _TimelineItem(
+      );
+
+      // Jika sudah berangkat, tampilkan tujuan satu per satu sesuai urutan
+      for (int i = 0; i < widget.data.tujuan.length; i++) {
+        final tujuanLabel = 'Tiba di ${widget.data.tujuan[i]}';
+        if (widget.data.waktuTujuan.length > i &&
+            widget.data.waktuTujuan[i] != null &&
+            widget.data.waktuTujuan[i] != '') {
+          items.add(
+            _TimelineItem(
               icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
-              time:
-                  '${data.waktuTujuan.where((w) => w != null).length}/${data.tujuan.length}',
-              label: 'Ditempat',
+              time: widget.data.waktuTujuan[i] ?? '--:--',
+              label: tujuanLabel,
             ),
-          ),
-        ),
-        Expanded(
-          child: GestureDetector(
-            onTap: onPulangTap,
-            child: _TimelineItem(
-              icon: Image.asset('doc/pulang.png', width: 32, height: 32),
-              time: data.waktuPulang ?? '--:--',
-              label: 'Pulang',
+          );
+        } else {
+          items.add(
+            _TimelineItem(
+              icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
+              time: '--:--',
+              label: tujuanLabel,
             ),
+          );
+          break; // Jika belum dicatat, berhenti di sini
+        }
+      }
+
+      // Pulang hanya muncul jika semua tujuan sudah dicatat
+      if (widget.data.waktuTujuan.length == widget.data.tujuan.length &&
+          widget.data.waktuTujuan.every((w) => w != null && w != '') &&
+          widget.data.waktuPulang != null &&
+          widget.data.waktuPulang != '') {
+        items.add(
+          _TimelineItem(
+            icon: Image.asset('doc/pulang.png', width: 32, height: 32),
+            time: widget.data.waktuPulang ?? '--:--',
+            label: 'Pulang',
           ),
+        );
+      } else if (widget.data.waktuTujuan.length == widget.data.tujuan.length &&
+          widget.data.waktuTujuan.every((w) => w != null && w != '') &&
+          (widget.data.waktuPulang == null || widget.data.waktuPulang == '')) {
+        items.add(
+          _TimelineItem(
+            icon: Image.asset('doc/pulang.png', width: 32, height: 32),
+            time: '--:--',
+            label: 'Pulang',
+          ),
+        );
+      }
+    } else {
+      // Jika belum berangkat, hanya tampilkan berangkat
+      items.add(
+        _TimelineItem(
+          icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
+          time: '--:--',
+          label: 'Berangkat',
         ),
-      ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items,
     );
   }
 }
 
 class _TimelineItem extends StatelessWidget {
-  final Widget icon;
+  final Image icon;
   final String time;
   final String label;
 
   const _TimelineItem({
+    Key? key,
     required this.icon,
     required this.time,
     required this.label,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        icon,
-        const SizedBox(height: 4),
-        Text(
-          time,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black87,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          icon,
+          const SizedBox(width: 12),
+          Text(
+            time,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 14,
-            color: Colors.black54,
-          ),
-        ),
-      ],
+          const SizedBox(width: 12),
+          Text(label, style: const TextStyle(fontSize: 15)),
+        ],
+      ),
     );
   }
 }

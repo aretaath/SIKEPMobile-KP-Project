@@ -7,7 +7,6 @@ import 'package:sikep/widgets/attendance.dart';
 import 'package:sikep/widgets/timeline.dart';
 import 'package:sikep/widgets/perdin_detail.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -300,18 +299,20 @@ class _HomePageState extends State<HomePage> {
     final now = TimeOfDay.now().format(context);
     setState(() {
       if (_step == 0) {
+        // Catat waktu berangkat
         _waktuBerangkat = now;
         _lokasiBerangkat = _currentAddress;
         _step++;
       } else if (_step > 0 && _step <= _tujuan.length) {
-        if (_selectedTujuanIndex != null &&
-            _waktuTujuan[_selectedTujuanIndex!] == null) {
-          _waktuTujuan[_selectedTujuanIndex!] = now;
-          _lokasiTujuan[_selectedTujuanIndex!] = _currentAddress;
-          _selectedTujuanIndex = null;
+        // Cari tujuan berikutnya yang belum dicatat
+        int tujuanIndex = _waktuTujuan.indexWhere((w) => w == null);
+        if (tujuanIndex != -1) {
+          _waktuTujuan[tujuanIndex] = now;
+          _lokasiTujuan[tujuanIndex] = _currentAddress;
           _step++;
         }
       } else if (_step > _tujuan.length) {
+        // Catat waktu pulang
         _waktuPulang = now;
         _lokasiPulang = _currentAddress;
         _step++;
@@ -418,9 +419,6 @@ class _HomePageState extends State<HomePage> {
         lokasiBerangkat: _lokasiBerangkat,
         lokasiPulang: _lokasiPulang,
       ),
-      onDitempatTap: _showTujuanDialog,
-      onBerangkatTap: _showBerangkatInfo,
-      onPulangTap: _showPulangInfo,
     );
   }
 
@@ -430,31 +428,15 @@ class _HomePageState extends State<HomePage> {
       child: AttendanceButton(
         width: 300,
         height: 50,
-        onConfirm: (selectedTujuan) {
-          if (_step > 0 && _step <= _tujuan.length) {
-            if (_selectedTujuanIndex == null) {
-              _showTujuanDialog();
-            } else if (_waktuTujuan[_selectedTujuanIndex!] != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Tujuan ini sudah dicatat')),
-              );
-            } else {
-              _catatWaktu();
-            }
-          } else {
-            _catatWaktu();
-          }
-        },
-        tujuan: _tujuan,
-        selectedTujuan: _selectedTujuanIndex != null
-            ? _tujuan[_selectedTujuanIndex!]
-            : null,
-        onRequestSelectTujuan: _showTujuanDialog,
+        onConfirm: _catatWaktu,
         lokasiSiap: _lokasiSiap,
+        waktuBerangkat: _waktuBerangkat,
+        waktuTujuan: _waktuTujuan,
+        waktuPulang: _waktuPulang,
+        tujuan: _tujuan,
       ),
     );
   }
-
 
   Widget _perdinNotes() {
     return Container(
