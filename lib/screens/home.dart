@@ -5,6 +5,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:sikep/widgets/attendance.dart';
 import 'package:sikep/widgets/timeline.dart';
+import 'package:sikep/widgets/perdin_detail.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,7 +47,6 @@ class _HomePageState extends State<HomePage> {
   int _step = 0;
 
   bool _lokasiSiap = false;
-  bool _showOfficialTripDetail = true;
   bool _showNotesForm = false;
 
   final List<String> _savedNotes = [];
@@ -349,7 +350,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 25),
                   _attendanceButton(),
                   const SizedBox(height: 30),
-                  _perdinDetail(),
+                  PerdinDetail(),
                   const SizedBox(height: 25),
                   _perdinNotes(),
                   const SizedBox(height: 25),
@@ -454,69 +455,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _perdinDetail() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFF38C7A8),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  'Perjalanan Dinas Hari Ini',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _showOfficialTripDetail = !_showOfficialTripDetail;
-                  });
-                },
-                child: Icon(
-                  _showOfficialTripDetail
-                      ? Icons.visibility_off
-                      : Icons.visibility,
-                  color: Colors.white70,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          if (_showOfficialTripDetail)
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  _InfoRow(
-                    label: 'Nama Ketua',
-                    value: 'Putut Indrayana, SE.M.EcDev',
-                  ),
-                  _InfoRow(label: 'NIP', value: '189012134151679801'),
-                  _InfoRow(label: 'No SPD', value: '700/063/SPD.IRB.1/2025'),
-                  _InfoRow(label: 'Tujuan', value: '1. SMP N 2 Tambak'),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 
   Widget _perdinNotes() {
     return Container(
@@ -661,30 +599,6 @@ class _HomePageState extends State<HomePage> {
         note,
         style: const TextStyle(fontSize: 16, color: Colors.black),
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _InfoRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 90,
-          child: Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-          ),
-        ),
-        Expanded(child: Text(value, style: const TextStyle(fontSize: 14))),
-      ],
     );
   }
 }
