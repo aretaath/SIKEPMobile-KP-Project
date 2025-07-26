@@ -32,7 +32,6 @@ class _TimelineWidgetState extends State<TimelineWidget> {
   Widget build(BuildContext context) {
     final List<_TimelineItem> items = [];
 
-    // Timeline hanya tampil berangkat terlebih dahulu
     if (widget.data.waktuBerangkat != null &&
         widget.data.waktuBerangkat != '') {
       items.add(
@@ -43,7 +42,6 @@ class _TimelineWidgetState extends State<TimelineWidget> {
         ),
       );
 
-      // Jika sudah berangkat, tampilkan tujuan satu per satu sesuai urutan
       for (int i = 0; i < widget.data.tujuan.length; i++) {
         final tujuanLabel = 'Tiba di ${widget.data.tujuan[i]}';
         if (widget.data.waktuTujuan.length > i &&
@@ -64,11 +62,10 @@ class _TimelineWidgetState extends State<TimelineWidget> {
               label: tujuanLabel,
             ),
           );
-          break; // Jika belum dicatat, berhenti di sini
+          break;
         }
       }
 
-      // Pulang hanya muncul jika semua tujuan sudah dicatat
       if (widget.data.waktuTujuan.length == widget.data.tujuan.length &&
           widget.data.waktuTujuan.every((w) => w != null && w != '') &&
           widget.data.waktuPulang != null &&
@@ -92,7 +89,6 @@ class _TimelineWidgetState extends State<TimelineWidget> {
         );
       }
     } else {
-      // Jika belum berangkat, hanya tampilkan berangkat
       items.add(
         _TimelineItem(
           icon: Image.asset('doc/berangkat.png', width: 32, height: 32),

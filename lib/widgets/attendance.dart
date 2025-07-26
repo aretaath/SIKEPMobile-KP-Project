@@ -27,7 +27,6 @@ class AttendanceButton extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double buttonWidth = width > screenWidth ? screenWidth * 0.9 : width;
 
-    // Determine current attendance step
     int step = 0;
     if (waktuBerangkat != null && waktuBerangkat != '') {
       step++;
@@ -48,7 +47,6 @@ class AttendanceButton extends StatelessWidget {
       }
     }
 
-    // Button label logic
     String buttonText;
     if (step == 0) {
       buttonText = 'Catat Keberangkatan';

@@ -49,8 +49,7 @@ class _PerdinDetailState extends State<PerdinDetail> {
               ),
             ],
           ),
-          const SizedBox(height: 8), // Jarak standar antar elemen
-          // Bagian detail yang hanya akan tampil jika _showOfficialTripDetail == true
+          const SizedBox(height: 8),
           Visibility(
             visible: _showOfficialTripDetail,
             child: Container(

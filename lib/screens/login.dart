@@ -1,6 +1,7 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sikep/screens/home.dart';
+import 'package:sikep/utils/captcha.dart';
+import 'package:sikep/services/auth.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -12,21 +13,21 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
   final _captchaController = TextEditingController();
 
+  final _captchaUtil = CaptchaUtil();
+  late final AuthService _authService;
+
   bool _showPassword = false;
-  int _num1 = 10;
-  int _num2 = 6;
 
   @override
   void initState() {
     super.initState();
-    _generateCaptcha();
+    _authService = AuthService(_captchaUtil);
+    _captchaUtil.generate();
   }
 
-  void _generateCaptcha() {
+  void _refreshCaptcha() {
     setState(() {
-      var rand = Random();
-      _num1 = rand.nextInt(10) + 1;
-      _num2 = rand.nextInt(10) + 1;
+      _captchaUtil.generate();
       _captchaController.clear();
     });
   }
@@ -85,12 +86,13 @@ class _LoginState extends State<Login> {
                             setState(() => _showPassword = !_showPassword),
                         child: Container(
                           alignment: Alignment.center,
-                          width: 100,
+                          width: 110,
                           child: Text(
                             _showPassword ? "Sembunyikan" : "Tampilkan",
                             style: TextStyle(
                               color: Colors.black54,
                               fontWeight: FontWeight.w500,
+                              fontSize: 12,
                             ),
                           ),
                         ),
@@ -105,7 +107,7 @@ class _LoginState extends State<Login> {
                   ),
                   SizedBox(height: 16),
 
-                  // Captcha
+                  // Captcha Display
                   Row(
                     children: [
                       Expanded(
@@ -117,7 +119,7 @@ class _LoginState extends State<Login> {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "${_num1} + ${_num2}",
+                            _captchaUtil.getQuestion(),
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 24,
@@ -126,7 +128,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(width: 12),
-                      Container(
+                      SizedBox(
                         height: 58,
                         width: 58,
                         child: ElevatedButton(
@@ -137,7 +139,7 @@ class _LoginState extends State<Login> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: _generateCaptcha,
+                          onPressed: _refreshCaptcha,
                           child: Icon(Icons.refresh, color: Colors.white),
                         ),
                       ),
@@ -160,7 +162,7 @@ class _LoginState extends State<Login> {
                   ),
                   SizedBox(height: 16),
 
-                  // Button Masuk
+                  // Tombol Masuk
                   SizedBox(
                     width: double.infinity,
                     height: 58,
@@ -172,10 +174,9 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       onPressed: () {
-                        // Login Action disini
-
-                        if (_captchaController.text ==
-                            (_num1 + _num2).toString()) {
+                        if (_authService.validateCaptcha(
+                          _captchaController.text,
+                        )) {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -207,7 +208,7 @@ class _LoginState extends State<Login> {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        // Aksi lupa password disini
+                        // Aksi lupa password
                       },
                       child: Text(
                         "Lupa Password ?",
