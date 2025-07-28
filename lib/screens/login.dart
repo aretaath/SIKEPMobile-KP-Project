@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sikep/screens/home.dart';
 import 'package:sikep/utils/captcha.dart';
 import 'package:sikep/services/auth.dart';
+//import 'package:sikep/models/user.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -173,26 +174,43 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      onPressed: () {
-                        if (_authService.validateCaptcha(
+                      onPressed: () async {
+                        final identifier = _nipController.text.trim();
+                        final password = _passwordController.text.trim();
+
+                        if (!_authService.validateCaptcha(
                           _captchaController.text,
                         )) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomePage(),
-                            ),
-                          );
-                        } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text(
                                 'Captcha tidak sesuai, silakan coba lagi',
                               ),
                             ),
                           );
+                          return;
                         }
+
+                        _authService.login(identifier, password).then((user) {
+                          if (user != null) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(user: user),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Login gagal: NIP/NIK atau Password salah',
+                                ),
+                              ),
+                            );
+                          }
+                        });
                       },
+
                       child: Text(
                         'Masuk',
                         style: TextStyle(

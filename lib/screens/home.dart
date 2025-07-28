@@ -7,9 +7,11 @@ import 'package:sikep/widgets/perdin_notes.dart';
 import 'package:sikep/widgets/user_info.dart';
 import 'package:sikep/services/location.dart';
 import 'package:sikep/utils/datetime.dart';
+import 'package:sikep/models/user.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final UserModel user;
+  const HomePage({super.key, required this.user});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -119,7 +121,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const UserInfo(),
+                  UserInfo(user: widget.user),
                   const SizedBox(height: 30),
                   _dateTimeLocation(),
                   const SizedBox(height: 30),

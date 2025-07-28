@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sikep/widgets/logout.dart';
+import 'package:sikep/models/user.dart';
 
 class UserInfo extends StatelessWidget {
-  const UserInfo({super.key});
+  final UserModel user;
+  const UserInfo({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
-    final String nama = "Nama Pegawai";
-    final String nip = "1234567890";
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -17,14 +16,14 @@ class UserInfo extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                nama,
+                user.nama,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
               ),
               Text(
-                '$nip',
+                user.nip,
                 style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
             ],
