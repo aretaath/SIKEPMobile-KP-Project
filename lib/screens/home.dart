@@ -7,7 +7,6 @@ import 'package:sikep/widgets/perdin_notes.dart';
 import 'package:sikep/widgets/user_info.dart';
 import 'package:sikep/services/location.dart';
 import 'package:sikep/utils/datetime.dart';
-import 'package:sikep/widgets/logout.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
