@@ -186,12 +186,14 @@ class _HomePageState extends State<HomePage> {
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 4),
           Text(
             '$_currentDay, $_currentDate',
-            style: const TextStyle(fontSize: 14, color: Colors.black54),
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color.fromARGB(188, 0, 0, 0),
+            ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 14),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(

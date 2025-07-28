@@ -10,7 +10,7 @@ class LogoutButton extends StatelessWidget {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(15),
           ),
           title: const Text(
             'Konfirmasi Logout',
@@ -45,7 +45,7 @@ class LogoutButton extends StatelessWidget {
                   vertical: 12,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(25),
                 ),
               ),
               onPressed: () {

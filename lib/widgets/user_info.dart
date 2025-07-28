@@ -24,7 +24,7 @@ class UserInfo extends StatelessWidget {
                 ),
               ),
               Text(
-                'NIP $nip',
+                '$nip',
                 style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
             ],
