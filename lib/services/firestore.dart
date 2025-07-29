@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sikep/models/user.dart';
-import 'package:sikep/models/spd.dart';
-import 'package:sikep/models/ppd.dart';
+import 'package:sikep/models/perdin.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -30,18 +29,5 @@ class FirestoreService {
   Future<List<PerdinModel>> getAllPerdin() async {
     final snapshot = await _db.collection('perjalanan_dinas').get();
     return snapshot.docs.map((doc) => PerdinModel.fromMap(doc.data())).toList();
-  }
-
-  //ppd
-  Future<void> addPpd(PpdModel ppd) async {
-    await _db.collection('ppd').doc(ppd.noSpd).set(ppd.toMap());
-  }
-
-  Future<PpdModel?> getPpdByNoSpd(String noSpd) async {
-    final doc = await _db.collection('ppd').doc(noSpd).get();
-    if (doc.exists) {
-      return PpdModel.fromMap(doc.data()!);
-    }
-    return null;
   }
 }
