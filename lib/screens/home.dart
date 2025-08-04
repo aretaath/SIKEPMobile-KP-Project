@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   String? _waktuBerangkat;
   List<String?> _waktuTujuan = [null, null];
   String? _waktuPulang;
-  List<String> _tujuan = ['Kantor Cabang', 'Lokasi Proyek'];
+  List<String> _tujuan = ['SMP N 2 Tambak', 'SMP N 1 Sumpiuh'];
   String? _lokasiBerangkat;
   String? _lokasiPulang;
   List<String?> _lokasiTujuan = [null, null];

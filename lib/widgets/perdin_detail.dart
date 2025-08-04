@@ -18,7 +18,7 @@ class _PerdinDetailState extends State<PerdinDetail> {
         color: const Color(0xFF38C7A8),
         borderRadius: BorderRadius.circular(15),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -67,7 +67,12 @@ class _PerdinDetailState extends State<PerdinDetail> {
                   ),
                   _InfoRow(label: 'NIP', value: '189012134151679801'),
                   _InfoRow(label: 'No SPD', value: '700/063/SPD.IRB.1/2025'),
-                  _InfoRow(label: 'Tujuan', value: '1. SMP N 2 Tambak'),
+                  _InfoRow(
+                    label: 'Tujuan',
+                    value:
+                        '1. SMP N 2 Tambak\n'
+                        '2. SMP N 1 Sumpiuh',
+                  ),
                 ],
               ),
             ),
