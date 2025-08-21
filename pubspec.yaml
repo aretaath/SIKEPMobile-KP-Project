@@ -43,6 +43,7 @@ dependencies:
   firebase_auth: ^5.7.0
   grouped_list: ^6.0.0
   google_fonts: ^6.2.1
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -68,9 +69,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - doc/berangkat.png
-    - doc/ditempat.png
-    - doc/pulang.png
+    - assets/berangkat.png
+    - assets/ditempat.png
+    - assets/pulang.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -97,3 +98,16 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+  color: "#3cbb92"
+  image: assets/logo.png
+  branding: assets/nama.png
+
+  android_12:
+    color: "#3CBB92"
+    image: assets/logo.png
+    branding: assets/nama.png

@@ -36,7 +36,7 @@ class _TimelineWidgetState extends State<TimelineWidget> {
         widget.data.waktuBerangkat != '') {
       items.add(
         _TimelineItem(
-          icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
+          icon: Image.asset('assets/berangkat.png', width: 32, height: 32),
           time: widget.data.waktuBerangkat ?? '--:--',
           label: 'Berangkat',
         ),
@@ -49,7 +49,7 @@ class _TimelineWidgetState extends State<TimelineWidget> {
             widget.data.waktuTujuan[i] != '') {
           items.add(
             _TimelineItem(
-              icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
+              icon: Image.asset('assets/ditempat.png', width: 32, height: 32),
               time: widget.data.waktuTujuan[i] ?? '--:--',
               label: tujuanLabel,
             ),
@@ -57,7 +57,7 @@ class _TimelineWidgetState extends State<TimelineWidget> {
         } else {
           items.add(
             _TimelineItem(
-              icon: Image.asset('doc/ditempat.png', width: 32, height: 32),
+              icon: Image.asset('assets/ditempat.png', width: 32, height: 32),
               time: '--:--',
               label: tujuanLabel,
             ),
@@ -72,7 +72,7 @@ class _TimelineWidgetState extends State<TimelineWidget> {
           widget.data.waktuPulang != '') {
         items.add(
           _TimelineItem(
-            icon: Image.asset('doc/pulang.png', width: 32, height: 32),
+            icon: Image.asset('assets/pulang.png', width: 32, height: 32),
             time: widget.data.waktuPulang ?? '--:--',
             label: 'Pulang',
           ),
@@ -82,7 +82,7 @@ class _TimelineWidgetState extends State<TimelineWidget> {
           (widget.data.waktuPulang == null || widget.data.waktuPulang == '')) {
         items.add(
           _TimelineItem(
-            icon: Image.asset('doc/pulang.png', width: 32, height: 32),
+            icon: Image.asset('assets/pulang.png', width: 32, height: 32),
             time: '--:--',
             label: 'Pulang',
           ),
@@ -91,7 +91,7 @@ class _TimelineWidgetState extends State<TimelineWidget> {
     } else {
       items.add(
         _TimelineItem(
-          icon: Image.asset('doc/berangkat.png', width: 32, height: 32),
+          icon: Image.asset('assets/berangkat.png', width: 32, height: 32),
           time: '--:--',
           label: 'Berangkat',
         ),
