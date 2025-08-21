@@ -4,7 +4,7 @@
 
     
     <application
-        android:label="sikep"
+        android:label="SIKEP Inspektorat Banyumas"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -44,6 +44,7 @@ dependencies:
   grouped_list: ^6.0.0
   google_fonts: ^6.2.1
   flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -111,3 +112,8 @@ flutter_native_splash:
     color: "#3CBB92"
     image: assets/logo.png
     branding: assets/nama.png
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
