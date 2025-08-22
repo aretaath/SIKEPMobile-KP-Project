@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sikep/screens/home.dart';
 import 'package:sikep/utils/captcha.dart';
 import 'package:sikep/services/auth.dart';
+import 'package:sikep/screens/forgot_password.dart';
+
 //import 'package:sikep/models/user.dart';
 
 class Login extends StatefulWidget {
@@ -226,7 +228,12 @@ class _LoginState extends State<Login> {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        // Aksi lupa password
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ForgotPasswordPage(),
+                          ),
+                        );
                       },
                       child: Text(
                         "Lupa Password ?",
